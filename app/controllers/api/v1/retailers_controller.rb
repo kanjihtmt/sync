@@ -45,6 +45,8 @@ class Api::V1::RetailersController < ApplicationController
   end
 
   def retailer_params
+    logger.debug(params)
+    #ActionController::Parameters.new(params).permit(:name, :status, :created_at, :updated_at)
     params.permit(:name, :status, :created_at, :updated_at)
   end
 end
