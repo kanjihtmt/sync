@@ -1,7 +1,9 @@
 class Api::V1::RetailersController < ApplicationController
+  #before_action :login_auth
   before_action :set_retailer, only: %i(show update destroy)
 
   def index
+    logger.debug(session[:user_id])
     @retailers = Retailer.status(params[:status])
   end
 
