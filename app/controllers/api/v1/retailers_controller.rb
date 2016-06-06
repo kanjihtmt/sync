@@ -3,16 +3,6 @@ class Api::V1::RetailersController < ApplicationController
 
   def index
     @retailers = Retailer.status(params[:status])
-    # @retailers = case params[:status]
-    #                when 'modified'
-    #                  Retailer.modified
-    #                when 'added'
-    #                  Retailer.added
-    #                when 'deleted'
-    #                  Retailer.deleted
-    #                else
-    #                  Retailer.default
-    #              end
   end
 
   def show
@@ -20,6 +10,7 @@ class Api::V1::RetailersController < ApplicationController
 
   def create
     @retailer = Retailer.new(retailer_params)
+    @retailer.status = Retailer::ADDED
     if @retailer.save
       render :show, status: :ok
     else
@@ -28,16 +19,22 @@ class Api::V1::RetailersController < ApplicationController
   end
 
   def update
-    if @retailer.update(retailer_params)
+    retailer = retailer_params
+    retailer[:status] = Retailer::MODIFIED
+    if @retailer.update(retailer)
       render :show, status: :ok
     else
       render json: @retailer.errors, status: :unprocessable_entity
     end
   end
 
-  def delete
-    @retailer.destroy
-    format.json { head :no_content }
+  def destroy
+    @retailer.status = Retailer::DELETED
+    if @retailer.save
+      render :show, status: :ok
+    else
+      render json: @retailer.errors, status: :unprocessable_entity
+    end
   end
 
   private
@@ -46,8 +43,6 @@ class Api::V1::RetailersController < ApplicationController
   end
 
   def retailer_params
-    logger.debug(params)
-    #ActionController::Parameters.new(params).permit(:name, :status, :created_at, :updated_at)
-    params.permit(:name, :status, :created_at, :updated_at)
+    params.permit(:name, :created_at, :updated_at)
   end
 end
