@@ -2,16 +2,17 @@ class Api::V1::RetailersController < ApplicationController
   before_action :set_retailer, only: %i(show update destroy)
 
   def index
-    @retailers = case (params[:status])
-                   when 'modified'
-                     Retailer.modified
-                   when 'added'
-                     Retailer.added
-                   when 'deleted'
-                     Retailer.deleted
-                   else
-                     Retailer.default
-                 end
+    @retailers = Retailer.status(params[:status])
+    # @retailers = case params[:status]
+    #                when 'modified'
+    #                  Retailer.modified
+    #                when 'added'
+    #                  Retailer.added
+    #                when 'deleted'
+    #                  Retailer.deleted
+    #                else
+    #                  Retailer.default
+    #              end
   end
 
   def show
