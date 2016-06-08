@@ -6,13 +6,13 @@ class Sale < ActiveRecord::Base
   scope :status, -> (type) do
     case type
       when 'modified'
-        Sale.where(status: MODIFIED)
+        self.where(status: MODIFIED)
       when 'added'
-        Sale.where(status: ADDED)
+        self.where(status: ADDED)
       when 'deleted'
-        Sale.where(status: DELETED)
+        self.where(status: DELETED)
       else
-        Sale.all
+        self.all
     end
   end
 
