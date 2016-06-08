@@ -1,5 +1,4 @@
 class Retailer < ActiveRecord::Base
-  DEFAULT = 0
   MODIFIED = 1
   ADDED = 2
   DELETED = 3
@@ -13,7 +12,7 @@ class Retailer < ActiveRecord::Base
       when 'deleted'
          Retailer.where(status: DELETED)
       else
-         Retailer.where(status: DEFAULT)
+         Retailer.all
     end
   end
 
