@@ -3,8 +3,11 @@ class Api::V1::RetailersController < ApplicationController
   before_action :set_retailer, only: %i(show update destroy)
 
   def index
-    logger.debug(session[:user_id])
-    @retailers = Retailer.status(params[:status])
+    if params[:updated_after]
+      @retailers = Retailer.status(params[:status]).where('updated_at >= ?', params[:updated_after])
+    else
+      @retailers = Retailer.status(params[:status])
+    end
   end
 
   def show

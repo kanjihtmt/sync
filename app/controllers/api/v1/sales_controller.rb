@@ -2,7 +2,11 @@ class Api::V1::SalesController < ApplicationController
   before_action :set_sale, only: %i(show update destroy)
 
   def index
-    @sales = Sale.status(params[:status])
+    if params[:updated_after]
+      @sales = Sale.status(params[:status]).where('updated_at >= ?', params[:updated_after])
+    else
+      @sales = Sale.status(params[:status])
+    end
   end
 
   def show

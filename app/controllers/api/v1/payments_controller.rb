@@ -2,7 +2,11 @@ class Api::V1::PaymentsController < ApplicationController
   before_action :set_payment, only: %i(show update destroy)
 
   def index
-    @payments = Payment.status(params[:status])
+    if params[:updated_after]
+      @payments = Payment.status(params[:status]).where('updated_at >= ?', params[:updated_after])
+    else
+      @payments = Payment.status(params[:status])
+    end
   end
 
   def show
