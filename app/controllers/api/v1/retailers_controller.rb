@@ -1,5 +1,4 @@
 class Api::V1::RetailersController < ApplicationController
-  #before_action :login_auth
   before_action :set_retailer, only: %i(show update destroy)
 
   def index
