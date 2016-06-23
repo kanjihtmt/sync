@@ -25,6 +25,15 @@ class Api::V1::SalesController < ApplicationController
   def update
     sale = sale_params
     sale[:status] = Sale::MODIFIED
+
+    # TODO: 後でDRYにする
+    unless sale[:edited_at].nil?
+      before_edited_at = Sale.find(@sale.id).edited_at
+      if !before_edited_at.nil? and sale[:edited_at] <= before_edited_at
+        sale[:edited_at] = before_edited_at
+      end
+    end
+
     if @sale.update(sale)
       render :show, status: :ok
     else

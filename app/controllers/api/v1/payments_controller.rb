@@ -25,6 +25,15 @@ class Api::V1::PaymentsController < ApplicationController
   def update
     payment = payment_params
     payment[:status] = Payment::MODIFIED
+
+    # TODO: 後でDRYにする
+    unless payment[:edited_at].nil?
+      before_edited_at = Payment.find(@payment.id).edited_at
+      if !before_edited_at.nil? and payment[:edited_at] <= before_edited_at
+        payment[:edited_at] = before_edited_at
+      end
+    end
+
     if @payment.update(payment)
       render :show, status: :ok
     else
