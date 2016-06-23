@@ -35,6 +35,15 @@ class Api::V1::PaymentsController < ApplicationController
     end
 
     if @payment.update(payment)
+      if @payment.sale.status == Sale::DELETED
+        Sale.where(id: @payment.sale.id).update_all status: Sale::MODIFIED
+      end
+      if @payment.sale.retailer.status = Retailer::MODIFIED
+        Retailer.where(id: @payment.sale.retailer.id).update_all status: Retailer::MODIFIED
+      end
+      @payment.sale.status = Sale::MODIFIED
+      @payment.sale.retailer.status = Retailer::MODIFIED if @payment.sale.retailer == Retailer::DELETED
+      @payment.save!
       render :show, status: :ok
     else
       render json: @payment.errors, status: :unprocessable_entity

@@ -35,6 +35,9 @@ class Api::V1::SalesController < ApplicationController
     end
 
     if @sale.update(sale)
+      if @sale.retailer.status = Retailer::MODIFIED
+        Retailer.where(id: @sale.retailer.id).update_all status: Retailer::MODIFIED
+      end
       render :show, status: :ok
     else
       render json: @sale.errors, status: :unprocessable_entity
