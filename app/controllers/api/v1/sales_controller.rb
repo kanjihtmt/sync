@@ -16,6 +16,9 @@ class Api::V1::SalesController < ApplicationController
     @sale = Sale.new(sale_params)
     @sale.status = Sale::ADDED
     if @sale.save
+      if @sale.retailer.status == Retailer::DELETED
+        Retailer.where(id: @sale.retailer.id).update_all status: Retailer::ADDED
+      end
       render :show, status: :ok
     else
       render json: @sale.errors, status: :unprocessable_entity
@@ -35,7 +38,7 @@ class Api::V1::SalesController < ApplicationController
     end
 
     if @sale.update(sale)
-      if @sale.retailer.status = Retailer::MODIFIED
+      if @sale.retailer.status == Retailer::DELETED
         Retailer.where(id: @sale.retailer.id).update_all status: Retailer::MODIFIED
       end
       render :show, status: :ok

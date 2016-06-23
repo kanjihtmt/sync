@@ -16,6 +16,12 @@ class Api::V1::PaymentsController < ApplicationController
     @payment = Payment.new(payment_params)
     @payment.status = Payment::ADDED
     if @payment.save
+      if @payment.sale.status == Sale::DELETED
+        Sale.where(id: @payment.sale.id).update_all status: Sale::ADDED
+      end
+      if @payment.sale.retailer.status == Retailer::DELETED
+        Retailer.where(id: @payment.sale.retailer.id).update_all status: Retailer::ADDED
+      end
       render :show, status: :ok
     else
       render json: @payment.errors, status: :unprocessable_entity
@@ -38,7 +44,7 @@ class Api::V1::PaymentsController < ApplicationController
       if @payment.sale.status == Sale::DELETED
         Sale.where(id: @payment.sale.id).update_all status: Sale::MODIFIED
       end
-      if @payment.sale.retailer.status = Retailer::MODIFIED
+      if @payment.sale.retailer.status == Retailer::DELETED
         Retailer.where(id: @payment.sale.retailer.id).update_all status: Retailer::MODIFIED
       end
       @payment.sale.status = Sale::MODIFIED
