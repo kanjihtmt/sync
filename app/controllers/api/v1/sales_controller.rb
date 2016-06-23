@@ -47,6 +47,6 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def sale_params
-    params.permit(:amount, :status, :retailer_id, :created_at, :updated_at)
+    params.permit(:amount, :status, :retailer_id, :created_at, :updated_at, :edited_at)
   end
 end

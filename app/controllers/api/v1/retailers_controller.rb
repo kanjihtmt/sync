@@ -26,6 +26,15 @@ class Api::V1::RetailersController < ApplicationController
   def update
     retailer = retailer_params
     retailer[:status] = Retailer::MODIFIED
+
+    # TODO: 後でDRYにする
+    unless retailer[:edited_at].nil?
+      before_edited_at = Retailer.find(@retailer.id).edited_at
+      if !before_edited_at.nil? and retailer[:edited_at] <= before_edited_at
+        retailer[:edited_at] = before_edited_at
+      end
+    end
+
     if @retailer.update(retailer)
       render :show, status: :ok
     else
@@ -48,6 +57,6 @@ class Api::V1::RetailersController < ApplicationController
   end
 
   def retailer_params
-    params.permit(:name, :created_at, :updated_at)
+    params.permit(:name, :created_at, :updated_at, :edited_at)
   end
 end
